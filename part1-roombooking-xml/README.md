@@ -18,4 +18,4 @@ Dans cet exercice, vous devez impérativement utiliser l'API DOM fournie par JAX
 1. Examinez la classe de test RoomBookinDomParserTest ; exécutez les tests de cette classe et constatez que les tests ne passent pas.
 2. Modifiez le code de votre projet de telle sorte que les tests passent. 
 
-> fix #1.2 Parser SAX
+> fix #1.2 Parser DOM
