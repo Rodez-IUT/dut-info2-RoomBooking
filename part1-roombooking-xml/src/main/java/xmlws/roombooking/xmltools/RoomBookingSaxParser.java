@@ -8,12 +8,16 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Class for objects responsible of RoomBooking xml files parsing
  * SAX version
  */
 public class RoomBookingSaxParser implements RoomBookingParser {
+
+    private static Logger logger = Logger.getLogger(RoomBookingSaxParser.class.getName());
 
     /**
      * Parse an xml file provided as an input stream
@@ -29,7 +33,7 @@ public class RoomBookingSaxParser implements RoomBookingParser {
             SAXParser saxParser = spf.newSAXParser();
             saxParser.parse(inputStream, new RoomBookingHandler(roomBooking));
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.severe(e.getMessage());
             roomBooking = null;
         }
         return roomBooking;
@@ -49,63 +53,56 @@ public class RoomBookingSaxParser implements RoomBookingParser {
                                  String qName,
                                  Attributes atts)
                 throws SAXException {
-            switch (localName) {
-                case "label":
-                    currentElement = CurrentElement.LABEL;
-                    break;
-                case "username":
-                    currentElement = CurrentElement.USERNAME;
-                    break;
-                case "startDate":
-                    currentElement = CurrentElement.START_DATE;
-                    break;
-                case "endDate":
-                    currentElement = CurrentElement.END_DATE;
-                    break;
-                default:
-                    currentElement = CurrentElement.OTHER;
-            }
+            currentElement = CurrentElement.valueOf(localName);
         }
 
         public void characters(char ch[], int start, int length)
                 throws SAXException {
             switch (currentElement) {
-                case LABEL:
+                case label:
+                    logger.info("in label element");
                     String label = new String(ch, start, length);
                     roomBooking.setRoomLabel(label);
                     currentElement = CurrentElement.OTHER;
                     break;
-                case USERNAME:
+                case username:
                     String username = new String(ch, start, length);
                     roomBooking.setUsername(username);
                     currentElement = CurrentElement.OTHER;
                     break;
-                case START_DATE:
+                case startDate:
                     try {
                         String dateAsString = new String(ch, start, length);
                         roomBooking.setStartDate(sdf.parse(dateAsString));
                     } catch (ParseException e) {
-                        e.printStackTrace();
+                        logger.severe(e.getMessage());
                     }
                     currentElement = CurrentElement.OTHER;
                     break;
-                case END_DATE:
+                case endDate:
                     try {
                         String dateAsString = new String(ch, start, length);
                         roomBooking.setEndDate(sdf.parse(dateAsString));
                     } catch (ParseException e) {
-                        e.printStackTrace();
+                        logger.severe(e.getMessage());
                     }
+                    currentElement = CurrentElement.OTHER;
+                    break;
+                default:
                     currentElement = CurrentElement.OTHER;
             }
         }
     }
 
     private enum CurrentElement {
-        LABEL,
-        USERNAME,
-        START_DATE,
-        END_DATE,
-        OTHER;
+        label,
+        username,
+        startDate,
+        endDate,
+        roombooking,
+        room,
+        user,
+        booking,
+        OTHER
     }
 }

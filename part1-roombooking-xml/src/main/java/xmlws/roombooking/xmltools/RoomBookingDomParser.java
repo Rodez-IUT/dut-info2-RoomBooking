@@ -6,12 +6,15 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.logging.Logger;
 
 /**
  *  Class for objects responsible of RoomBooking xml files parsing
  *  DOM version
  */
 public class RoomBookingDomParser implements RoomBookingParser {
+
+    private static Logger logger = Logger.getLogger(RoomBookingDomParser.class.getName());
 
     /**
      * Parse an xml file provided as an input stream
@@ -30,7 +33,7 @@ public class RoomBookingDomParser implements RoomBookingParser {
             roomBooking.setStartDate(sdf.parse(getValueForElementInDocument(Element.startDate,doc)));
             roomBooking.setEndDate(sdf.parse(getValueForElementInDocument(Element.endDate,doc)));
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.severe(e.getMessage());
             roomBooking = null;
         }
         return roomBooking;
